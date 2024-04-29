@@ -15,6 +15,8 @@ const app = express();
 
 app.use(express.json())
 
+app.use(express.static('public'))
+
 // using router here 
 
 app.use('/api/auth' , router)
