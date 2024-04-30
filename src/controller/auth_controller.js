@@ -2,6 +2,8 @@ import { User } from "../model/user_model.js";
 
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
+import bcrypt from 'bcrypt'
+
 const register = async (req, res) => {
 
     try {
@@ -81,4 +83,51 @@ const register = async (req, res) => {
 }
 
 
-export default { register }
+//User login logic
+
+
+const login = async ( req, res)=>{
+try {
+
+  const { email , password } =req.body;
+
+  const userExit = await User.findOne({ email})
+
+  if(!userExit){
+   return   res.send({
+        message: "please register yourself",
+
+    })
+  }
+
+ 
+
+  const user = await bcrypt.compare(password , userExit.password)
+
+if(user){
+    res.status(200).send({
+        message  :"login successfully",
+        token: await userExit.getJsonwebToken(),
+        userId: userExit._id.toString()
+    })
+}
+else{
+
+    res.status(400).send({
+        message :"password is incorrect"
+    })
+}
+    
+} catch (error) {
+
+    res.status(500).send({
+        message :"internal server error"
+    })
+    
+}
+
+    
+}
+
+
+export default { register , login }

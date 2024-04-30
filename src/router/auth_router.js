@@ -30,4 +30,9 @@ router.route('/register').post(
     ]),
     authController.register)
 
+
+    // login router
+
+    router.route('/login').post(authController.login)
+
 export {router}
