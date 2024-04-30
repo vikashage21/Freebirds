@@ -115,6 +115,27 @@ userSchema.methods.getJsonwebToken = async function () {
 
 }
 
+// defining campare password for this creating method
+
+userSchema.methods.camparePassword = async function (password){
+
+ 
+    try {
+
+        const user = this;
+       
+        const isMath = await bcrypt.compare(password, user.password )
+
+        return isMath;
+        
+        
+    } catch (error) {
+
+        console.log(error)
+        
+    }
+}
+
 const User = mongoose.model('User', userSchema)
 
 

@@ -26,7 +26,7 @@ const register = async (req, res) => {
         // handleing the files 
 
         const avatarLocalPath = req.files?.avatar[0]?.path
-        
+
         const photosLocalPath = req.files?.photos[0]?.path
 
         // console.log(req.files.photos)
@@ -36,7 +36,7 @@ const register = async (req, res) => {
         // console.log(photosLocalPath)
 
 
-        if(!avatarLocalPath) {
+        if (!avatarLocalPath) {
             return res.status(400).json({
                 msg: "please upload an avatar"
             })
@@ -86,48 +86,53 @@ const register = async (req, res) => {
 //User login logic
 
 
-const login = async ( req, res)=>{
-try {
+const login = async (req, res) => {
+    try {
 
-  const { email , password } =req.body;
+        const { email, password } = req.body;
 
-  const userExit = await User.findOne({ email})
+        const userExit = await User.findOne({ email })
 
-  if(!userExit){
-   return   res.send({
-        message: "please register yourself",
+        if (!userExit) {
+            return res.send({
+                message: "please register yourself",
 
-    })
-  }
+            })
+        }
 
- 
 
-  const user = await bcrypt.compare(password , userExit.password)
 
-if(user){
-    res.status(200).send({
-        message  :"login successfully",
-        token: await userExit.getJsonwebToken(),
-        userId: userExit._id.toString()
-    })
-}
-else{
+        //   const user = await bcrypt.compare(password , userExit.password)
 
-    res.status(400).send({
-        message :"password is incorrect"
-    })
-}
-    
-} catch (error) {
+        // creating method of camparing the password
 
-    res.status(500).send({
-        message :"internal server error"
-    })
-    
-}
+        const user = await userExit.camparePassword(password)
 
     
+        if (user) {
+            res.status(200).send({
+                message: "login successfully",
+                token: await userExit.getJsonwebToken(),
+                userId: userExit._id.toString()
+            })
+        }
+        else {
+
+            res.status(400).send({
+                message: "password is incorrect"
+            })
+        }
+
+    } catch (error) {
+
+        res.status(500).send({
+            message: "internal server error"
+        })
+
+    }
+
+
 }
 
 
-export default { register , login }
+export default { register, login }
